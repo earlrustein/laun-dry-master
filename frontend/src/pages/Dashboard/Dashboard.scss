@@ -1,0 +1,365 @@
+.dashboard-container {
+
+    .dashboard-actions-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        max-width: 100%;
+        margin-bottom: 32px;
+
+        @media (max-width: 480px) {
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .dashboard-filter-container {
+            .dashboard-filter {
+                width: 150px;
+                height: 35px;
+                border-radius: 5px;
+                padding: 0 12px;
+                border: 1px solid #ADADAD;
+                position: relative;
+
+                &:focus {
+                    outline: none;
+                    border: 1px solid #ADADAD;
+                }
+
+                @media (max-width: 480px) {
+                    width: 100%;
+                }
+            }
+
+            @media (max-width: 480px) {
+                width: 100%;
+            }
+        }
+
+        .btn-generate {
+            height: 35px;
+            width: 150px;
+            border-radius: 5px;
+            color: #17588E;
+            background-color: #17588E;
+            border: 1px solid #17588E;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+
+            &:hover {
+                background-color: #1c6aaa;
+                border: 1px solid #1c6aaa;
+            }
+
+            @media (max-width: 480px) {
+                width: 100%;
+            }
+        }
+    }
+
+    .dashboard-small-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        margin-bottom: 32px;
+        
+        .dashboard-small-card {
+            flex: 1 1 calc(15%);
+            height: 100px;
+            border-radius: 10px;
+            padding: 24px 48px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 2px solid #F1F2F6;
+            
+            @media (max-width: 480px) {
+                padding: 16px 24px;
+                height: 75px;
+            }
+
+            &.overall-revenue {
+                background-color: #17588E;
+                border: 1px solid #17588E;
+            }
+
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 32px;
+
+                @media (max-width: 480px) {
+                    justify-content: flex-start;
+                }
+                
+                .icon {
+                    width: 34px;
+                    height: 34px;
+                    background-color: white;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    &.total-gross {
+                        background-color: rgba(0, 109, 44, 0.1);
+                        span {
+                            color: #006d2c;
+                        }
+                    }
+
+                    &.total-transaction {
+                        background-color: rgba(23, 88, 142, 0.1);
+                    }
+
+                    &.total-expenses {
+                        background-color: rgba(182, 77, 73, 0.1);
+                    }
+                }
+
+                .header-text {
+                    font-weight: 500;
+                    font-size: 18px;
+                    color: #231F20;
+
+                    @media (max-width: 480px) {
+                        font-size: 14px;
+                    }
+
+                    &.overall-revenue {
+                        color: white;
+                    }
+                    
+                    &.total-expenses {
+                        color: #B64D49;
+                    }
+                }
+            }
+
+            .content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                color: #231F20;
+
+                &.overall-revenue {
+                    color: white;
+                }
+
+                &.total-expenses {
+                    color: #B64D49;
+                }
+
+                .content-total {
+                    font-weight: 500;
+                    font-size: 22px;
+
+                    @media (max-width: 480px) {
+                        font-size: 16px;
+                    }
+                }
+
+                .content-filter {
+                    font-size: 14px;
+                    font-weight: 100;
+                    color: #ADADAD;
+
+                    @media (max-width: 480px) {
+                        font-size: 10px;
+                    }
+
+                    &.overall-revenue {
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+
+    .dashboard-big-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+
+        .dashboard-big-card {
+            flex: 1 1 calc(40%);
+            height: 400px;
+            border-radius: 10px;
+            padding: 24px 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            border: 2px solid #F1F2F6;
+            justify-content: space-between;
+
+            @media (max-width: 480px) {
+                padding: 16px 24px;
+            }
+
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 32px;
+
+                .header-title {
+                    font-size: 18px;
+                    font-weight: 500;
+                    color: #231F20;
+                }
+
+                .header-filter {
+                    font-weight: 100;
+                    color: #ADADAD;
+                }
+            }
+
+            .chart-container {
+                width: 100%;
+                margin: 0 auto;
+                height: 80%;
+
+                @media (max-width: 480px) {
+                    max-width: 200px;
+                }
+            }
+        }
+    }
+}
+
+.custom-modal {
+    position: fixed;
+    bottom: 0;
+    left: 0; 
+    right: 0;
+    top: 60vh;
+    height: 40%;
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background-color: white;
+
+    @media (max-width: 480px) {
+        top: 30vh;
+        height: 75%;
+    }
+}
+
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.ReactModal__Content .modal-container {
+    overflow: hidden;
+    padding: 32px 64px;
+    height: 75%;
+
+    .header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(23, 88, 142, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &.close-icon {
+                width: 30px;
+                height: 30px;
+                background-color: #F1F2F6;
+                margin-left: auto;
+                cursor: pointer;
+            }
+        }
+
+        h2 {
+            color: #17588E;
+        }
+    }
+
+    .separator {
+        border:1px solid #F1F2F6;
+        width: 100%;
+        margin: 20px 0;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 90%;
+
+        .date-inputs-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 16px;
+
+            .date-input {
+                display: flex;
+                flex-direction: column;
+                width: 48%;
+                gap: 16px;
+
+                @media (max-width: 480px) {
+                    width: 100%;
+                }
+
+                label {
+                    color: #17588E;
+                    font-weight: 500;
+                }
+
+                .input {
+                    height: 40px;
+                    padding: 0 16px;
+                    border:1px solid #F1F2F6;
+                    border-radius: 5px;
+                    color: #231F20;
+                }
+            }
+        }
+
+        .btn-generate {
+            margin-top: 32px;
+            height: 35px;
+            width: 250px;
+            margin: auto;
+            border-radius: 5px;
+            color: #17588E;
+            background-color: #17588E;
+            border: 1px solid #17588E;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+
+            &:hover {
+                background-color: #1c6aaa;
+                border: 1px solid #1c6aaa;
+            }
+
+            @media (max-width: 480px) {
+                width: 100%;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        padding: 32px;
+    }
+}
