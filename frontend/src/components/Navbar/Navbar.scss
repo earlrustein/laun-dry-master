@@ -1,33 +1,136 @@
 .navbar {
-    display: flex;
-    align-items: center;
-    color: #231F20;
-    padding: 24px 64px;
-  
-    .navbar-links {
-      list-style: none;
-      display: flex;
-      gap: 32px;
-  
-      li {
-        margin-left: 20px;
-  
-        a {
-          color: #231F20;
-          text-decoration: none;
-          font-size: 1rem;
-          font-weight: 500;
-  
-          &:hover {
-            color: #17588E;
-          }
-        }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 4rem;
+  background-color: #17588E;
 
-        .active-link {
+  @media (max-width: 768px) {
+    padding: 1rem 2rem;
+
+    .brand-logo {
+      transform: scale(0.7);
+    }
+  }
+
+  .navbar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+
+    .burger-menu {
+      display: none;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+
+      .burger-bar {
+        width: 24px;
+        height: 3px;
+        background-color: white;
+        transition: transform 0.3s ease;
+      }
+
+      &.open .burger-bar:nth-child(1) {
+        transform: rotate(45deg) translate(4px, 4px);
+      }
+
+      &.open .burger-bar:nth-child(2) {
+        opacity: 0;
+      }
+
+      &.open .burger-bar:nth-child(3) {
+        transform: rotate(-45deg) translate(4px, -4px);
+      }
+    }
+  }
+
+  .navbar-links {
+    display: flex;
+    gap: 4rem;
+
+    li {
+      list-style: none;
+
+      a {
+        color: white;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 100;
+
+        &:hover {
+          color: white;
+        }
+      }
+
+      .active-link {
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+        border-bottom: 3px solid white;
+        padding-bottom: 16px;
+        display: block;
+        width: 125px;
+        text-align: center;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+
+    .navbar-header {
+      .burger-menu {
+        display: flex;
+      }
+    }
+
+    .navbar-links {
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: absolute;
+      top: 70px;
+      right: 0;
+      background: #f8f9fa;
+      width: 100%;
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      height: 100vh;
+      z-index: 999;
+
+      &.show {
+        display: flex;
+        padding-top: 4rem;
+        gap: 2rem;
+      }
+
+      li {
+        text-align: center;
+
+        a {
+          font-size: 18px;
           color: #17588E;
+          font-weight: 100;
+        }
+        
+        .active-link {
           font-weight: bold;
+          text-decoration: none;
+          color: #17588E;
+          font-size: 20px;
+          border-bottom: 0;
+          width: 100%;
+          padding-bottom: 0;
+          display: inline;
+        }
       }
     }
   }
 }
-  

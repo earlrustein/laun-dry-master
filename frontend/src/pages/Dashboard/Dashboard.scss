@@ -1,11 +1,90 @@
 .dashboard-container {
+    margin-bottom: 64px;
+
+    .dashboard-display {
+        display: flex;
+        gap: 64px;
+        height: 500px;
+        background-color: #17588E;
+        margin: -25px -64px;
+        justify-content: center;
+        align-items: center;
+
+        .display-container {
+            display: flex;
+            flex-direction: column;
+            color: white;
+            gap: 24px;
+            width: 30%;
+
+            .display-title {
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .display-subtitle {
+                font-weight: 200;
+                font-size: 16px;
+            }
+
+            
+            .btn-generate {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 16px;
+                height: 40px;
+                width: 175px;
+                border-radius: 3px;
+                background-color: white;
+                border: 1px solid white;
+                color: #17588E;
+                cursor: pointer;
+                transition: 0.3s;
+
+                .arrow-icon {
+                    margin-left: auto;
+                }
+
+                span {
+                    width: 90%;
+                }
+
+                &:hover {
+                    background-color: #17588E;
+                    color: white;
+                }
+
+                @media (max-width: 480px) {
+                    width: 100%;
+                }
+            }
+        }
+
+        @media (max-width: 480px) {
+            flex-direction: column;
+            height: auto;
+            gap: 16px;
+        
+            .display-container {
+              width: 80%;
+              align-items: center;
+              text-align: center; 
+              padding-bottom: 64px;
+            }
+        }
+    }
+
+    .dashboard-header {
+        margin-top: 128px;
+    }
 
     .dashboard-actions-container {
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
         max-width: 100%;
-        margin-bottom: 32px;
+        margin: 64px 0 32px 0;
 
         @media (max-width: 480px) {
             justify-content: center;
@@ -14,12 +93,16 @@
         }
 
         .dashboard-filter-container {
+            margin-left: auto;
+            
             .dashboard-filter {
                 width: 150px;
                 height: 35px;
                 border-radius: 5px;
                 padding: 0 12px;
-                border: 1px solid #ADADAD;
+                border: 2px solid rgba(228, 229, 233, 0.741);
+                background-color: #f8f9fa;
+                color: #231F20;
                 position: relative;
 
                 &:focus {
@@ -36,27 +119,6 @@
                 width: 100%;
             }
         }
-
-        .btn-generate {
-            height: 35px;
-            width: 150px;
-            border-radius: 5px;
-            color: #17588E;
-            background-color: #17588E;
-            border: 1px solid #17588E;
-            color: white;
-            cursor: pointer;
-            transition: 0.3s;
-
-            &:hover {
-                background-color: #1c6aaa;
-                border: 1px solid #1c6aaa;
-            }
-
-            @media (max-width: 480px) {
-                width: 100%;
-            }
-        }
     }
 
     .dashboard-small-container {
@@ -66,14 +128,14 @@
         margin-bottom: 32px;
         
         .dashboard-small-card {
-            flex: 1 1 calc(15%);
+            flex: 1 1 calc(25% - 128px);
             height: 100px;
             border-radius: 10px;
             padding: 24px 48px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 2px solid #F1F2F6;
+            border: 2px solid rgba(228, 229, 233, 0.741);
             
             @media (max-width: 480px) {
                 padding: 16px 24px;
@@ -179,6 +241,10 @@
         }
     }
 
+    .no-available-data {
+        color: #231F20;
+    }
+
     .dashboard-big-container {
         display: flex;
         flex-wrap: wrap;
@@ -192,7 +258,7 @@
             display: flex;
             flex-direction: column;
             gap: 32px;
-            border: 2px solid #F1F2F6;
+            border: 2px solid rgba(228, 229, 233, 0.741);
             justify-content: space-between;
 
             @media (max-width: 480px) {
@@ -218,7 +284,7 @@
             }
 
             .chart-container {
-                width: 100%;
+                width: 95%;
                 margin: 0 auto;
                 height: 80%;
 
@@ -337,7 +403,7 @@
 
         .btn-generate {
             margin-top: 32px;
-            height: 35px;
+            height: 40px;
             width: 250px;
             margin: auto;
             border-radius: 5px;

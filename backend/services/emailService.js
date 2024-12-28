@@ -1,6 +1,4 @@
 const sendGridMail = require('@sendgrid/mail');
-const moment = require('moment');
-const fs = require('fs');
 require('dotenv').config();
 
 sendGridMail.setApiKey(process.env.SENDGRID_API_KEY);
@@ -22,7 +20,6 @@ const sendEmailWithAttachment = async ({ to, from, subject, text, fileBuffer, fi
       ],
     };
 
-    // Send the email
     await sendGridMail.send(message);
     console.log('Email sent successfully!');
   } catch (error) {
