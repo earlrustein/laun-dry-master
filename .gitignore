@@ -2,5 +2,4 @@
 node_modules/
 
 #firebase settings
-FirebaseConfig.js
 firebase-key.json
