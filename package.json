@@ -1,0 +1,18 @@
+{
+    "name": "laun-dry-master-app",
+    "version": "1.0.0",
+    "scripts": {
+      "start": "npm run start-backend",
+      "start-backend": "node backend/server.js",
+      "build": "npm run build-frontend",
+      "build-frontend": "cd frontend && npm install && npm run build",
+    },
+    "workspaces": [
+      "backend",
+      "frontend"
+    ],
+    "dependencies": {
+      "concurrently": "^8.0.1"
+    }
+}
+  
