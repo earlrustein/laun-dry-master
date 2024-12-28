@@ -52,12 +52,13 @@ router.post('/send-email-web', upload.single('file'), async (req, res) => {
       },
       subject: 'Financial Report',
       text: `Please find the attached Financial Report from ${moment(startDate).utcOffset(8).format('MMM. DD, YYYY')} 
-        to ${moment(endDate).utcOffset(8).format('MMM. DD, YYYY')})`,
+        to ${moment(endDate).utcOffset(8).format('MMM. DD, YYYY')}`,
       fileBuffer: buffer, 
       filename: `Financial Report (${moment(startDate).utcOffset(8).format('MMM. DD, YYYY')} - ${moment(endDate).utcOffset(8).format('MMM. DD, YYYY')}).pdf`,
     });
     res.status(200).json({ message: 'Email sent successfully!' });
   } catch (error) {
+    console.error('Error occurred:', err); 
     res.status(500).json({ error: 'Internal server error' });
   }
 });
