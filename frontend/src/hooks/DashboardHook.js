@@ -53,7 +53,7 @@ const chartRef = useRef(null);
 
     const processReport = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/send-email-web', {
+        const response = await fetch('https://laundry-master-emailer.onrender.com/api/send-email-web', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
