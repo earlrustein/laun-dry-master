@@ -8,7 +8,7 @@ const generatePDF = async (data) => {
   const browser = await puppeteer.launch(
     { 
       headless: 'new',
-      executablePath: '/opt/render/.cache/puppeteer/chrome/linux-131.0.6778.204/chrome-linux64/chrome'
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     });
   const page = await browser.newPage();
 
