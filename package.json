@@ -5,7 +5,8 @@
       "start": "npm run start-backend",
       "start-backend": "node backend/server.js",
       "build": "npm run build-frontend",
-      "build-frontend": "cd frontend && npm install && npm run build"
+      "build-frontend": "cd frontend && npm install && npm run build",
+      "postinstall": "npx puppeteer browsers install chrome"
     },
     "workspaces": [
       "backend",
