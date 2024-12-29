@@ -2,12 +2,11 @@
     "name": "laun-dry-master-app",
     "version": "1.0.0",
     "scripts": {
-      "start": "npm run start-backend",
-      "start-backend": "node backend/server.js",
-      "build": "npm run build-frontend",
-      "build-frontend": "cd frontend && npm install && npm run build",
-      "postinstall": "echo 'Installing Puppeteer Chrome...' && npx puppeteer browsers install chrome && ls -R /opt/render/.cache/puppeteer"
-    },
+    "start": "npm run start-backend",
+    "start-backend": "node backend/server.js",
+    "build": "./render-build.sh",
+    "postinstall": "echo 'Installing Puppeteer Chrome...' && npx puppeteer browsers install chrome && ls -R /opt/render/.cache/puppeteer"
+  },
     "workspaces": [
       "backend",
       "frontend"
