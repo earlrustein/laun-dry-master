@@ -5,7 +5,11 @@ const generatePDF = async (data) => {
   const { salesData, totalGrossSales, expensesData, totalExpensesData, dateRange } = data;
 
   console.log('======================Executable Path:', puppeteer.executablePath());
-  const browser = await puppeteer.launch({ headless: 'new' });
+  const browser = await puppeteer.launch(
+    { 
+      headless: 'new',
+      executablePath: '/opt/render/.cache/puppeteer/chrome/linux-131.0.6778.204/chrome-linux64/chrome'
+    });
   const page = await browser.newPage();
 
   await page.setContent(generateHTMLContent({ salesData, totalGrossSales, expensesData, totalExpensesData, dateRange }));
