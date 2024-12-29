@@ -16,7 +16,7 @@ import {
 import Modal from 'react-modal';
 import { ReactComponent as WashingIcon } from '../../assets/images/login-page-art-2.svg';
 import { DashboardHook } from '../../hooks/DashboardHook';
-
+import { ToastContainer } from 'react-toastify';
 
 ChartJS.register(ArcElement, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 Modal.setAppElement('#root');
@@ -40,7 +40,8 @@ const Dashboard = () => {
     endDate,
     handleEndDateChange,
     chartRef,
-    processReport
+    processReport,
+    isLoading
   } = DashboardHook();
 
   return (
@@ -211,7 +212,10 @@ const Dashboard = () => {
             </div>
             <h2> Generate a Report </h2>
 
-            <div className="icon close-icon" onClick={toggleModal}>
+            <div 
+              className={`icon close-icon ${isLoading ? 'disabled' : ''}`}
+              onClick={toggleModal}
+            >
               <MdClose size={15} color="#000" />
             </div>
           </div>
@@ -243,12 +247,22 @@ const Dashboard = () => {
               
             </div>
 
-            <button className='btn-generate' onClick={processReport}>
-              Generate Report
+            <button 
+              className={`btn-generate ${isLoading ? 'disabled' : ''}`}
+              onClick={processReport} 
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="spinner"></div>
+              ) : (
+                'Generate Report'
+              )}
             </button>
           </div>
         </div>
       </Modal>
+
+      <ToastContainer />
     </div>
   );
 };

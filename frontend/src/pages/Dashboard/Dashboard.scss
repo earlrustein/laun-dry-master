@@ -415,6 +415,9 @@
             color: white;
             cursor: pointer;
             transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             &:hover {
                 background-color: #1c6aaa;
@@ -425,9 +428,64 @@
                 width: 100%;
             }
         }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 12px;
+            height: 12px;
+            animation: spin 1.5s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     }
 
     @media (max-width: 480px) {
         padding: 32px;
     }
+
+    .disabled {
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+}
+
+.custom-toast {
+    font-size: 12px;
+}
+
+.Toastify__toast--success .Toastify__progress-bar {
+    background-color: #17588E;
+}
+
+.Toastify__toast--success .Toastify__icon {
+    color: #17588E;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+    fill: #17588E !important;
+}
+
+.Toastify__progress-bar--success {
+    background: #17588E !important;
+}
+
+.Toastify__toast--success .Toastify__progress-bar {
+    background-color: #FF6384;
+}
+
+.Toastify__toast--success .Toastify__icon {
+    color: #FF6384;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+    fill: #FF6384 !important;
+}
+
+.Toastify__progress-bar--success {
+    background: #FF6384 !important;
 }

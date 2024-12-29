@@ -2,10 +2,12 @@ import { useRef, useEffect, useState, useMemo } from 'react';
 import moment from 'moment';
 import { firestore } from '../config/FirebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export const DashboardHook = () => {
-const chartRef = useRef(null);
-    const [isLoading, setLoading] = useState(true);
+    const chartRef = useRef(null);
+    const [isLoading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderList, setOrderList] = useState([]);
     const [expenseList, setExpenseList] = useState([]);
@@ -33,46 +35,57 @@ const chartRef = useRef(null);
     }, [isModalOpen]);
 
     const salesFilterOptions = [
-    { label: 'Today', value: '1'},
-    { label: 'Last 7 Days', value: '2' },
-    { label: 'Last 6 Months', value: '3' },
-    { label: 'Last 6 Years', value: '4' },
+        { label: 'Today', value: '1'},
+        { label: 'Last 7 Days', value: '2' },
+        { label: 'Last 6 Months', value: '3' },
+        { label: 'Last 6 Years', value: '4' },
     ];
 
     const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+        setIsModalOpen(!isModalOpen);
     }
 
     const handleStartDateChange = (e) => {
-    setStartDate(e.target.value);
+        setStartDate(e.target.value);
     };
 
     const handleEndDateChange = (e) => {
-    setEndDate(e.target.value);
+        setEndDate(e.target.value);
     };
 
     const processReport = async () => {
-    try {
-        const response = await fetch('https://laundry-master-emailer.onrender.com/api/send-email-web', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            startDate: startDate,
-            endDate: endDate,
-        }),
-        });
+        setLoading(true);
+        try {
+            const response = await fetch('https://laundry-master-emailer.onrender.com/api/send-email-web', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    startDate: startDate,
+                    endDate: endDate,
+                }),
+            });
 
-        if (!response.ok) {
-        throw new Error('Error calling the API');
+            if (!response.ok) {
+                throw new Error('Error calling the API');
+            }
+
+            const data = await response.json();
+            setIsModalOpen(false);
+            toast.success('Report has been sent to the set emails!', {
+                position: "bottom-center",
+                className: 'custom-toast',
+            });
+        } catch (error) {
+            console.error('Error in processReport:', error);
+            toast.error('Error generating a report. Please try again.', {
+                position: "bottom-center",
+                className: 'custom-toast',
+            });
+        } finally {
+            setLoading(false);
         }
-
-        const data = await response.json();
-        console.log('Report processed successfully:', data);
-    } catch (error) {
-        console.error('Error in processReport:', error);
-    }
     }
 
     const transformDataForLineChart = (orderList, salesFilter) => {
@@ -143,61 +156,61 @@ const chartRef = useRef(null);
     };
 
     const transformDataForPieChart = (list) => {
-    if (!list || list.length === 0) return { labels: [], datasets: [] }; // Guard clause for empty list
+        if (!list || list.length === 0) return { labels: [], datasets: [] }; // Guard clause for empty list
 
-    const filteredList = list.filter((expense) => {
-        const expenseDate = moment(new Date(expense.date.seconds * 1000)).utcOffset(8);
-        const currentDate = moment().utcOffset(8);
+        const filteredList = list.filter((expense) => {
+            const expenseDate = moment(new Date(expense.date.seconds * 1000)).utcOffset(8);
+            const currentDate = moment().utcOffset(8);
 
-        if (salesFilter === '1') {
-        return expenseDate.isSame(currentDate, 'day');
-        } else if (salesFilter === '2') {
-        const sevenDaysAgo = moment().utcOffset(8).startOf('day').subtract(7, 'days');
-        return expenseDate.isAfter(sevenDaysAgo);
-        } else if (salesFilter === '3') {
-        const sixMonthsAgo = moment().utcOffset(8).startOf('day').subtract(6, 'months');
-        return expenseDate.isAfter(sixMonthsAgo);
-        } else if (salesFilter === '4') {
-        const fiveYearsAgo = moment().utcOffset(8).startOf('day').subtract(5, 'years');
-        return expenseDate.isAfter(fiveYearsAgo);
-        }
+            if (salesFilter === '1') {
+            return expenseDate.isSame(currentDate, 'day');
+            } else if (salesFilter === '2') {
+            const sevenDaysAgo = moment().utcOffset(8).startOf('day').subtract(7, 'days');
+            return expenseDate.isAfter(sevenDaysAgo);
+            } else if (salesFilter === '3') {
+            const sixMonthsAgo = moment().utcOffset(8).startOf('day').subtract(6, 'months');
+            return expenseDate.isAfter(sixMonthsAgo);
+            } else if (salesFilter === '4') {
+            const fiveYearsAgo = moment().utcOffset(8).startOf('day').subtract(5, 'years');
+            return expenseDate.isAfter(fiveYearsAgo);
+            }
 
-        return true;
-    });
+            return true;
+        });
 
-    const groupedData = filteredList.reduce((acc, expense) => {
-        const category = expense.category;
-        if (!acc[category]) {
-        acc[category] = 0;
-        }
-        acc[category] += expense.expensePrice;
-        return acc;
-    }, {});
+        const groupedData = filteredList.reduce((acc, expense) => {
+            const category = expense.category;
+            if (!acc[category]) {
+            acc[category] = 0;
+            }
+            acc[category] += expense.expensePrice;
+            return acc;
+        }, {});
 
-    const totalPrice = Object.values(groupedData).reduce((total, value) => total + value, 0);
-    setTotalExpenses(totalPrice);
+        const totalPrice = Object.values(groupedData).reduce((total, value) => total + value, 0);
+        setTotalExpenses(totalPrice);
 
-    const sortedCategory = Object.fromEntries(
-        Object.entries(groupedData).sort(([, a], [, b]) => b - a)
-    );
+        const sortedCategory = Object.fromEntries(
+            Object.entries(groupedData).sort(([, a], [, b]) => b - a)
+        );
 
-    const labels = Object.keys(sortedCategory).map((category) => {
-        const price = sortedCategory[category];
-        return `${category} (₱${price})`;
-    });
-    const data = Object.values(sortedCategory);
+        const labels = Object.keys(sortedCategory).map((category) => {
+            const price = sortedCategory[category];
+            return `${category} (₱${price})`;
+        });
+        const data = Object.values(sortedCategory);
 
-    return {
-        labels: labels,
-        datasets: [
-        {
-            label: 'Expense Categories',
-            data: data,
-            backgroundColor: labels.map((_, index) => getRedShade(index)),
-            hoverOffset: 4,
-        },
-        ],
-    };
+        return {
+            labels: labels,
+            datasets: [
+            {
+                label: 'Expense Categories',
+                data: data,
+                backgroundColor: labels.map((_, index) => getRedShade(index)),
+                hoverOffset: 4,
+            },
+            ],
+        };
     };
 
     const getRedShade = (index) => {
@@ -279,56 +292,56 @@ const chartRef = useRef(null);
     };
 
     useEffect(() => {
-    const fetchOrderList = async () => {
-        try {
-        const querySnapshot = await getDocs(collection(firestore, 'laundryOrders'));
-        const items = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        }));
-        setOrderList(items);
-        } catch (error) {
-        console.error('Error fetching data:', error);
-        } finally {
-        // setLoading(false);
-        }
-    };
+        const fetchOrderList = async () => {
+            try {
+            const querySnapshot = await getDocs(collection(firestore, 'laundryOrders'));
+            const items = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setOrderList(items);
+            } catch (error) {
+            console.error('Error fetching data:', error);
+            } finally {
+            // setLoading(false);
+            }
+        };
 
-    fetchOrderList();
+        fetchOrderList();
     }, []);
 
     const fetchExpenseList = async () => {
-    setLoading(true);
-    try {
-        const querySnapshot = await getDocs(collection(firestore, 'laundryExpenses'));
-        const items = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        }));
-        setExpenseList(items);
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    } finally {
-        setLoading(false);
-    }
-    }
-
-
-    useEffect(() => {
-    fetchExpenseList();
-    }, []);
-
-    useEffect(() => {
-    return () => {
-        if (chartRef.current) {
-        chartRef.current.destroy();
+        // setLoading(true);
+        try {
+            const querySnapshot = await getDocs(collection(firestore, 'laundryExpenses'));
+            const items = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+            }));
+            setExpenseList(items);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            // setLoading(false);
         }
-    };
+    }
+
+
+    useEffect(() => {
+        fetchExpenseList();
+        }, []);
+
+        useEffect(() => {
+        return () => {
+            if (chartRef.current) {
+            chartRef.current.destroy();
+            }
+        };
     }, []);
 
     useEffect(() => {
-    setTotalSales(salesChartData.total);
-    setTotalTransaction(salesChartData.totalTransaction);
+        setTotalSales(salesChartData.total);
+        setTotalTransaction(salesChartData.totalTransaction);
     }, [salesChartData]);
 
 
@@ -352,6 +365,7 @@ const chartRef = useRef(null);
         endDate,
         handleEndDateChange,
         chartRef,
-        processReport
+        processReport,
+        isLoading
     };
 }
