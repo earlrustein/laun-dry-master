@@ -4,7 +4,7 @@ const { generateHTMLContent } = require('./../templates/generated-html');
 const generatePDF = async (data) => {
   const { salesData, totalGrossSales, expensesData, totalExpensesData, dateRange } = data;
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: 'new' });
   const page = await browser.newPage();
 
   await page.setContent(generateHTMLContent({ salesData, totalGrossSales, expensesData, totalExpensesData, dateRange }));
