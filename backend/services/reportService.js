@@ -22,17 +22,17 @@ const fetchDataForReport = async (startDate = null, endDate = null) => {
         price: item.price,
         subTotal: item.subTotal,
       }))
-    );
-    // .reduce((acc, item) => {
-    //   const existingItem = acc.find((accItem) => accItem.description === item.description);
-    //   if (existingItem) {
-    //     existingItem.quantity += item.quantity;
-    //     existingItem.subTotal += item.subTotal;
-    //   } else {
-    //     acc.push({ ...item });
-    //   }
-    //   return acc;
-    // }, []);
+    )
+    .reduce((acc, item) => {
+      const existingItem = acc.find((accItem) => accItem.description === item.description);
+      if (existingItem) {
+        existingItem.quantity += item.quantity;
+        existingItem.subTotal += item.subTotal;
+      } else {
+        acc.push({ ...item });
+      }
+      return acc;
+    }, []);
 
   const totalGrossSales = salesData.reduce((sum, order) => sum + order.subTotal, 0);
 
@@ -47,18 +47,18 @@ const fetchDataForReport = async (startDate = null, endDate = null) => {
       category: expense.category,
       description: expense.description,
       price: expense.expensePrice,
-    }))
-    .reduce((acc, expense) => {
-      const existingExpense = acc.find((accExpense) => 
-        accExpense.category === expense.category && accExpense.description === expense.description);
+    }));
+    // .reduce((acc, expense) => {
+    //   const existingExpense = acc.find((accExpense) => 
+    //     accExpense.category === expense.category && accExpense.description === expense.description);
       
-      if (existingExpense) {
-        existingExpense.price += expense.price;
-      } else {
-        acc.push({ ...expense });
-      }
-      return acc;
-    }, []);
+    //   if (existingExpense) {
+    //     existingExpense.price += expense.price;
+    //   } else {
+    //     acc.push({ ...expense });
+    //   }
+    //   return acc;
+    // }, []);
 
   const totalExpensesData = expensesData.reduce((sum, expense) => sum + expense.price, 0);
 
