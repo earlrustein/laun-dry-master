@@ -2,7 +2,7 @@ import { useRef, useEffect, useState, useMemo } from 'react';
 import moment from 'moment';
 import { firestore } from '../config/FirebaseConfig';
 import { collection, getDocs } from 'firebase/firestore';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const DashboardHook = () => {
@@ -71,7 +71,6 @@ export const DashboardHook = () => {
                 throw new Error('Error calling the API');
             }
 
-            const data = await response.json();
             setIsModalOpen(false);
             toast.success('Report has been sent to the set emails!', {
                 position: "bottom-center",
@@ -89,70 +88,70 @@ export const DashboardHook = () => {
     }
 
     const transformDataForLineChart = (orderList, salesFilter) => {
-    let startDate;
-    let labelCount = 7;
-    let labelFormat = "MMM D";
-    let xAxisTitle = '';
+        let startDate;
+        let labelCount = 7;
+        let labelFormat = "MMM D";
+        let xAxisTitle = '';
 
-    switch (salesFilter) {
-        case '1':
-        startDate = moment().utcOffset(8).startOf('day');
-        labelCount = 2;
-        break;
-        case '2':
-        startDate = moment().subtract(6, 'days').utcOffset(8).startOf('day');
-        labelCount = 7;
-        break;
-        case '3':
-        startDate = moment().subtract(5, 'months').utcOffset(8).startOf('month');
-        labelCount = 6;
-        labelFormat = "MMM YYYY";
-        break;
-        case '4':
-        startDate = moment().subtract(5, 'years').utcOffset(8).startOf('year');
-        labelCount = 6;
-        labelFormat = "YYYY";
-        break;
-        default:
-        startDate = moment().subtract(6, 'days').utcOffset(8).startOf('day');
-        labelCount = 7;
-        break;
-    }
-
-    const labels = Array.from({ length: labelCount }, (_, i) => {
-        return startDate.clone().add(i, salesFilter === '1' || salesFilter === '2' ? 'days' : salesFilter === '3' ? 'months' : 'years').format(labelFormat);
-    });
-
-    const data = Array(labelCount).fill(0);
-    let totalTransaction = 0;
-
-    orderList.forEach((item) => {
-        const orderDate = moment.unix(item.orderDate?.seconds).utcOffset(8).startOf('day');
-        const diff = orderDate.diff(startDate, salesFilter === '1' || salesFilter === '2' ? 'days' : salesFilter === '3' ? 'months' : 'years');
-
-        if (diff >= 0 && diff < labelCount) {
-        data[diff] += item.orderTotalPrice;
-        totalTransaction++;
+        switch (salesFilter) {
+            case '1':
+                startDate = moment().utcOffset(8).startOf('day');
+                labelCount = 2;
+                break;
+            case '2':
+                startDate = moment().subtract(6, 'days').utcOffset(8).startOf('day');
+                labelCount = 7;
+                break;
+            case '3':
+                startDate = moment().subtract(5, 'months').utcOffset(8).startOf('month');
+                labelCount = 6;
+                labelFormat = "MMM YYYY";
+                break;
+            case '4':
+                startDate = moment().subtract(5, 'years').utcOffset(8).startOf('year');
+                labelCount = 6;
+                labelFormat = "YYYY";
+                break;
+            default:
+                startDate = moment().subtract(6, 'days').utcOffset(8).startOf('day');
+                labelCount = 7;
+                break;
         }
-    });
 
-    const total = data.reduce((sum, value) => sum + value, 0);
+        const labels = Array.from({ length: labelCount }, (_, i) => {
+            return startDate.clone().add(i, salesFilter === '1' || salesFilter === '2' ? 'days' : salesFilter === '3' ? 'months' : 'years').format(labelFormat);
+        });
 
-    return {
-        labels,
-        datasets: [
-        {
-            data,
-            backgroundColor:[`rgba(23, 88, 142, 1)`],
-            borderWidth: 0,
-            strokeWidth: 2,
-            label: null
-        },
-        ],
-        total,
-        totalTransaction,
-        xAxisTitle,
-    };
+        const data = Array(labelCount).fill(0);
+        let totalTransaction = 0;
+
+        orderList.forEach((item) => {
+            const orderDate = moment.unix(item.orderDate?.seconds).utcOffset(8).startOf('day');
+            const diff = orderDate.diff(startDate, salesFilter === '1' || salesFilter === '2' ? 'days' : salesFilter === '3' ? 'months' : 'years');
+
+            if (diff >= 0 && diff < labelCount) {
+                data[diff] += item.orderTotalPrice;
+                totalTransaction++;
+            }
+        });
+
+        const total = data.reduce((sum, value) => sum + value, 0);
+
+        return {
+            labels,
+            datasets: [
+                {
+                    data,
+                    backgroundColor:[`rgba(23, 88, 142, 1)`],
+                    borderWidth: 0,
+                    strokeWidth: 2,
+                    label: null
+                },
+            ],
+            total,
+            totalTransaction,
+            xAxisTitle,
+        };
     };
 
     const transformDataForPieChart = (list) => {
@@ -163,16 +162,16 @@ export const DashboardHook = () => {
             const currentDate = moment().utcOffset(8);
 
             if (salesFilter === '1') {
-            return expenseDate.isSame(currentDate, 'day');
+                return expenseDate.isSame(currentDate, 'day');
             } else if (salesFilter === '2') {
-            const sevenDaysAgo = moment().utcOffset(8).startOf('day').subtract(7, 'days');
-            return expenseDate.isAfter(sevenDaysAgo);
+                const sevenDaysAgo = moment().utcOffset(8).startOf('day').subtract(7, 'days');
+                return expenseDate.isAfter(sevenDaysAgo);
             } else if (salesFilter === '3') {
-            const sixMonthsAgo = moment().utcOffset(8).startOf('day').subtract(6, 'months');
-            return expenseDate.isAfter(sixMonthsAgo);
+                const sixMonthsAgo = moment().utcOffset(8).startOf('day').subtract(6, 'months');
+                return expenseDate.isAfter(sixMonthsAgo);
             } else if (salesFilter === '4') {
-            const fiveYearsAgo = moment().utcOffset(8).startOf('day').subtract(5, 'years');
-            return expenseDate.isAfter(fiveYearsAgo);
+                const fiveYearsAgo = moment().utcOffset(8).startOf('day').subtract(5, 'years');
+                return expenseDate.isAfter(fiveYearsAgo);
             }
 
             return true;
@@ -181,7 +180,7 @@ export const DashboardHook = () => {
         const groupedData = filteredList.reduce((acc, expense) => {
             const category = expense.category;
             if (!acc[category]) {
-            acc[category] = 0;
+                acc[category] = 0;
             }
             acc[category] += expense.expensePrice;
             return acc;
@@ -203,105 +202,100 @@ export const DashboardHook = () => {
         return {
             labels: labels,
             datasets: [
-            {
-                label: 'Expense Categories',
-                data: data,
-                backgroundColor: labels.map((_, index) => getRedShade(index)),
-                hoverOffset: 4,
-            },
+                {
+                    label: 'Expense Categories',
+                    data: data,
+                    backgroundColor: labels.map((_, index) => getRedShade(index)),
+                    hoverOffset: 4,
+                },
             ],
         };
     };
 
     const getRedShade = (index) => {
-    const redShades = [
-        '#FF6384', '#FF6A5C', '#FF473A', '#FF244C', '#FF1E4D', '#FF4565', '#FF99CC',
-    ];
-    return redShades[index % redShades.length];
+        const redShades = [
+            '#FF6384', '#FF6A5C', '#FF473A', '#FF244C', '#FF1E4D', '#FF4565', '#FF99CC',
+        ];
+        return redShades[index % redShades.length];
     };
 
     const expenseChartData = useMemo(() => {
-    if (expenseList && expenseList.length > 0) {
-        return transformDataForPieChart(expenseList);
-    }
-    return { labels: [], datasets: [] };
+        if (expenseList && expenseList.length > 0) {
+            return transformDataForPieChart(expenseList);
+        }
+        
+        return { labels: [], datasets: [] };
     }, [expenseList, salesFilter]);
 
     const salesChartData = useMemo(() => transformDataForLineChart(orderList, salesFilter), [orderList, salesFilter]);
-
     const options = {
-    indexAxis: 'y',
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-        y: {
-        beginAtZero: true,
-        ticks: {
-            callback: (value, index) => salesChartData.labels[index],
-            color: 'rgba(23, 88, 142, 1)'
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: (value, index) => salesChartData.labels[index],
+                    color: 'rgba(23, 88, 142, 1)'
+                },
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: salesChartData.xAxisTitle
+                },
+                ticks: {
+                    callback: (value) => `₱${value}`,
+                    color: 'rgba(23, 88, 142, 1)'
+                },
+                grid: {
+                    display: false 
+                }
+            },
         },
+        plugins: {
+            title: {
+                display: false
+            },
+            legend: {
+                display: false,
+            },
         },
-        x: {
-        title: {
-            display: true,
-            text: salesChartData.xAxisTitle
-        },
-        ticks: {
-            callback: (value) => `₱${value}`,
-            color: 'rgba(23, 88, 142, 1)'
-        },
-        grid: {
-            display: false 
-        }
-        },
-    },
-    plugins: {
-        title: {
-        display: false
-        },
-        legend: {
-        display: false,
-        },
-    },
     };
 
     const pieOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        tooltip: {
-        callbacks: {
-            label: function (context) {
-            const label = context.label || '';
-            const value = context.raw || 0;
-            const price = `₱${value}`;
-            return `${label}: ${price}`;
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {
+            callbacks: {
+                label: function (context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const price = `₱${value}`;
+                return `${label}: ${price}`;
+                },
+            },
             },
         },
-        },
-    },
-    plugins: {
-        legend: {
-        position: "top",
-        },
-    }
     };
 
     const handleChange = (event) => {
-    setSalesFilter(event.target.value);
+        setSalesFilter(event.target.value);
     };
 
     useEffect(() => {
         const fetchOrderList = async () => {
             try {
-            const querySnapshot = await getDocs(collection(firestore, 'laundryOrders'));
-            const items = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setOrderList(items);
+                const querySnapshot = await getDocs(collection(firestore, 'laundryOrders'));
+                const items = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+                setOrderList(items);
             } catch (error) {
-            console.error('Error fetching data:', error);
+             console.error('Error fetching data:', error);
             } finally {
             // setLoading(false);
             }
@@ -315,8 +309,8 @@ export const DashboardHook = () => {
         try {
             const querySnapshot = await getDocs(collection(firestore, 'laundryExpenses'));
             const items = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
+                id: doc.id,
+                ...doc.data(),
             }));
             setExpenseList(items);
         } catch (error) {
@@ -329,12 +323,14 @@ export const DashboardHook = () => {
 
     useEffect(() => {
         fetchExpenseList();
-        }, []);
+    }, []);
 
-        useEffect(() => {
+    useEffect(() => {
+        const chartInstance = chartRef.current;
+    
         return () => {
-            if (chartRef.current) {
-            chartRef.current.destroy();
+            if (chartInstance) {
+                chartInstance.destroy();
             }
         };
     }, []);
@@ -352,8 +348,6 @@ export const DashboardHook = () => {
         totalSales,
         totalExpenses,
         salesFilterOptions,
-        salesFilter,
-        totalSales,
         totalTransaction,
         options,
         salesChartData,

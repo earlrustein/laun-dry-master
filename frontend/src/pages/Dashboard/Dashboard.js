@@ -46,7 +46,6 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-
       <div className="dashboard-display">
         <WashingIcon className="item-display" />
         <div className="display-container item-display">
