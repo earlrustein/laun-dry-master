@@ -1,6 +1,6 @@
 import React from 'react';
 import './Expenses.scss';
-import { MdArrowRightAlt, MdClose, MdOutlinePostAdd  } from "react-icons/md";
+import { MdArrowRightAlt, MdClose, MdOutlinePostAdd, MdEdit } from "react-icons/md";
 import { ReactComponent as ExpensesIcon } from '../../assets/images/expenses.svg';
 import { ExpenseHook } from '../../hooks/ExpenseHook';
 import {
@@ -32,7 +32,8 @@ const Expenses = () => {
         handleTotalPriceChange,
         totalPrice,
         description,
-        handleDescriptionChange
+        handleDescriptionChange,
+        isEditMode
     } = ExpenseHook();
 
     return (
@@ -47,7 +48,7 @@ const Expenses = () => {
                         Managed your expenses by recording it and viewing it effortlessly.
                     </div>
         
-                    <button className='btn-generate' onClick={toggleModal}>
+                    <button className='btn-generate' onClick={() => toggleModal(null)}>
                         <span> Record an Expense </span>
                         <MdArrowRightAlt className="arrow-icon" />
                     </button>
@@ -141,7 +142,7 @@ const Expenses = () => {
                                                 }).format(row.expensePrice)}
                                             </TableCell>
                                             <TableCell className='column-actions'>
-                                                <button className='btn-edit'> Edit </button>
+                                                <button className='btn-edit' onClick={() => toggleModal(row)}> Edit </button>
                                                 <button className='btn-delete'> Delete </button>
                                             </TableCell>
                                         </TableRow>
@@ -167,7 +168,7 @@ const Expenses = () => {
             <Modal
                 animationType="fade"
                 isOpen={isModalOpen}
-                onRequestClose={toggleModal}
+                onRequestClose={() => toggleModal(null)}
                 shouldCloseOnOverlayClick={false}
                 className='custom-modal'
                 overlayClassName='custom-modal-overlay'
@@ -175,13 +176,13 @@ const Expenses = () => {
                 <div className="modal-container">
                     <div className="header">
                         <div className="icon">
-                            <MdOutlinePostAdd  size={30} color="#17588E" />
+                            {isEditMode ? <MdEdit size={30} color="#17588E" /> : <MdOutlinePostAdd size={30} color="#17588E" />}
                         </div>
-                        <h2> Record an Expense </h2>
+                        <h2> {isEditMode ? 'Edit an Expense' : 'Record an Expense'} </h2>
             
                         <div 
                             className={`icon close-icon ${isLoading ? 'disabled' : ''}`}
-                            onClick={toggleModal}
+                            onClick={() => toggleModal(null)}
                         >
                             <MdClose size={15} color="#000" />
                         </div>

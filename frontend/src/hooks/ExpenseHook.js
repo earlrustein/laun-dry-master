@@ -6,6 +6,8 @@ import moment from 'moment';
 export const ExpenseHook = () => {
   const [isLoading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isEditMode, setEditMode] = useState(false);
+  const [selectedExpense, setSelectedExpense] = useState(null);
   const [expenseList, setExpenseList] = useState([]);
   const [order, setOrder] = useState(null);
   const [orderBy, setOrderBy] = useState(null);
@@ -71,8 +73,15 @@ export const ExpenseHook = () => {
     }
   };
 
-  const toggleModal = () => {
+  const toggleModal = (item) => {
     setModalOpen(!isModalOpen);
+    setEditMode(item == null ? false : true);
+    setSelectedExpense(item == null ? null : item);
+    setCategory(item == null ? '' : item.category );
+    setDescription(item == null ? '' : item.description);
+    setTotalPrice(item == null ? '' : item.expensePrice.toString());
+    setDate(item == null ? 
+      moment().utcOffset(8).format('YYYY-MM-DD') : moment(new Date(item.date)).utcOffset(8).format('YYYY-MM-DD'));
   }
 
   const handleCategoryChange = (e) => {
@@ -177,6 +186,7 @@ export const ExpenseHook = () => {
     handleTotalPriceChange,
     totalPrice,
     description,
-    handleDescriptionChange
+    handleDescriptionChange,
+    isEditMode
   };
 }
