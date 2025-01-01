@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { firestore } from '../config/FirebaseConfig';
-import { collection, getDocs, query, orderBy as orderData } from "firebase/firestore";
 import moment from 'moment';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { getExpenseRecords, getLastExpenseId, addExpense, editExpense, deleteExpense } from '../services/FirebaseService';
 
 export const ExpenseHook = () => {
   const [isLoading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isModalLoading, setModalLoading] = useState(false);
   const [isEditMode, setEditMode] = useState(false);
   const [selectedExpense, setSelectedExpense] = useState(null);
   const [expenseList, setExpenseList] = useState([]);
@@ -52,12 +55,8 @@ export const ExpenseHook = () => {
   const fetchExpenseList = async () => {
     setLoading(true);
     try {
-      const expenseQuery = query(
-        collection(firestore, "laundryExpenses"),
-        orderData("date", "desc")
-      );
-      const querySnapshot = await getDocs(expenseQuery);
-      const items = querySnapshot.docs.map((doc) => {
+      const data = await getExpenseRecords();
+      const items = data.docs.map((doc) => {
         const data = doc.data();
         return {
           id: doc.id,
@@ -81,7 +80,12 @@ export const ExpenseHook = () => {
     setDescription(item == null ? '' : item.description);
     setTotalPrice(item == null ? '' : item.expensePrice.toString());
     setDate(item == null ? 
-      moment().utcOffset(8).format('YYYY-MM-DD') : moment(new Date(item.date)).utcOffset(8).format('YYYY-MM-DD'));
+    moment().utcOffset(8).format('YYYY-MM-DD') : moment(new Date(item.date)).utcOffset(8).format('YYYY-MM-DD'));
+  }
+
+  const toggleDeleteModal = (item) => {
+    setSelectedExpense(item ? item : null);
+    setDeleteModalOpen(!isDeleteModalOpen);
   }
 
   const handleCategoryChange = (e) => {
@@ -94,32 +98,15 @@ export const ExpenseHook = () => {
   };
 
   const handleTotalPriceChange = (e) => {
-    setTotalPrice(e.target.value);
+
+    if (/^\d*$/.test(e.target.value)) {
+      setTotalPrice(e.target.value);
+    }
   }
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
   }
-
-  useEffect(() => {
-    fetchExpenseList();
-  }, []);
-
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-    } else {
-      document.body.style.overflow = 'auto';
-      document.body.style.position = 'static';
-    }
-
-    return () => {
-      document.body.style.overflow = 'auto';
-      document.body.style.position = 'static';
-    };
-  }, [isModalOpen]);
 
   const handleSort = (property) => {
     const isAscending = orderBy === property && order === "asc";
@@ -161,8 +148,144 @@ export const ExpenseHook = () => {
     page * rowsPerPage + rowsPerPage
   );
 
-  useEffect(() => {
+  const saveExpense = async () => {
+    setModalLoading(true);
+    
+    if (isEditMode) {
+      updateExpense();
+      return;
+    } 
+
+    recordExpense();
+  };
+
+  const recordExpense = async () => {
+    try {
+      const lastExpenseId = await getLastExpenseId();
+      const newExpenseId = lastExpenseId + 1;
+
+      await addExpense({
+        expenseId: newExpenseId,
+        category,
+        description,
+        date: moment(date) 
+          .set({ hour: moment().hour(), minute: moment().minute(), second: moment().second() })
+          .utcOffset(8, true)
+          .toDate(),
+        expensePrice: Number(totalPrice)
+      });
+
+      toast.success('Expense has been recorded!', {
+        position: "top-center",
+        className: 'custom-toast',
+      });
+      setModalOpen(false);
       fetchExpenseList();
+    } catch (error) {
+      console.error('Error recording the expense:', error);
+      toast.error('Error recording the expense. Please try again.', {
+        position: "top-center",
+        className: 'custom-toast',
+      });
+    } finally {
+      setModalLoading(false);
+    }
+  }
+
+  const updateExpense = async () => {
+    try {
+      const expenseId = selectedExpense?.expenseId;
+
+      if (!expenseId) {
+        toast.error('Error updating the expense. Please try again.', {
+          position: "top-center",
+          className: 'custom-toast',
+        });
+        throw new Error('Expense ID is required for updating');
+      }
+
+      await editExpense(expenseId, {
+        category,
+        description,
+        date: moment(date) 
+          .set({ hour: moment().hour(), minute: moment().minute(), second: moment().second() })
+          .utcOffset(8, true)
+          .toDate(),
+        expensePrice: Number(totalPrice)
+      });
+
+      toast.success('Expense has been updated!', {
+        position: "top-center",
+        className: 'custom-toast',
+      });
+      setModalOpen(false);
+      fetchExpenseList();
+    } catch (error) {
+      console.error('Error updating the expense:', error);
+      toast.error('Error updating the expense. Please try again.', {
+        position: "top-center",
+        className: 'custom-toast',
+      });
+    } finally {
+      setModalLoading(false);
+    }
+  }
+
+  const removeExpense = async () => {
+    setModalLoading(true);
+    try {
+      const expenseId = selectedExpense?.expenseId;
+
+      if (!expenseId) {
+        toast.error('Failed to update the expense record. Please try again.', {
+          position: "top-center",
+          className: 'custom-toast',
+        });
+        throw new Error('Expense ID is required for updating');
+      }
+
+      await deleteExpense(expenseId);
+      toast.success('Expense has been deleted!', {
+        position: "top-center",
+        className: 'custom-toast',
+      });
+      setDeleteModalOpen(false);
+      fetchExpenseList();
+    } catch (error) {
+      console.error('Error deleting the expense:', error);
+      toast.error('Failed to update the expense record. Please try again.', {
+        position: "top-center",
+        className: 'custom-toast',
+      });
+    } finally {
+      setModalLoading(false);
+    }
+  }
+
+  
+  useEffect(() => {
+    fetchExpenseList();
+  }, []);
+
+  useEffect(() => {
+    if (isModalOpen || isDeleteModalOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = 'auto';
+      document.body.style.position = 'static';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+      document.body.style.position = 'static';
+    };
+  }, [isModalOpen, isDeleteModalOpen]);
+
+
+  useEffect(() => {
+    fetchExpenseList();
   }, []);
 
   return {
@@ -187,6 +310,12 @@ export const ExpenseHook = () => {
     totalPrice,
     description,
     handleDescriptionChange,
-    isEditMode
+    isEditMode,
+    saveExpense,
+    isModalLoading,
+    toggleDeleteModal,
+    isDeleteModalOpen,
+    selectedExpense,
+    removeExpense
   };
 }

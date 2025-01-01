@@ -1,9 +1,8 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
 import moment from 'moment';
-import { firestore } from '../config/FirebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getExpenseRecords, getOrderRecords } from '../services/FirebaseService';
 
 export const DashboardHook = () => {
     const chartRef = useRef(null);
@@ -73,13 +72,13 @@ export const DashboardHook = () => {
 
             setIsModalOpen(false);
             toast.success('Report has been sent to the set emails!', {
-                position: "bottom-center",
+                position: "top-center",
                 className: 'custom-toast',
             });
         } catch (error) {
             console.error('Error in processReport:', error);
             toast.error('Error generating a report. Please try again.', {
-                position: "bottom-center",
+                position: "top-center",
                 className: 'custom-toast',
             });
         } finally {
@@ -288,16 +287,14 @@ export const DashboardHook = () => {
     useEffect(() => {
         const fetchOrderList = async () => {
             try {
-                const querySnapshot = await getDocs(collection(firestore, 'laundryOrders'));
-                const items = querySnapshot.docs.map((doc) => ({
+                const data = await getOrderRecords();
+                const items = data.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
                 setOrderList(items);
             } catch (error) {
              console.error('Error fetching data:', error);
-            } finally {
-            // setLoading(false);
             }
         };
 
@@ -305,18 +302,15 @@ export const DashboardHook = () => {
     }, []);
 
     const fetchExpenseList = async () => {
-        // setLoading(true);
         try {
-            const querySnapshot = await getDocs(collection(firestore, 'laundryExpenses'));
-            const items = querySnapshot.docs.map((doc) => ({
+            const data = await getExpenseRecords();
+            const items = data.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             }));
             setExpenseList(items);
         } catch (error) {
             console.error('Error fetching data:', error);
-        } finally {
-            // setLoading(false);
         }
     }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import './Expenses.scss';
-import { MdArrowRightAlt, MdClose, MdOutlinePostAdd, MdEdit } from "react-icons/md";
-import { ReactComponent as ExpensesIcon } from '../../assets/images/expenses.svg';
+import { MdArrowRightAlt, MdClose, MdOutlinePostAdd, MdEdit, MdDelete } from "react-icons/md";
+import { ReactComponent as ExpensesIcon } from '../../assets/images/expenses-clean.svg';
 import { ExpenseHook } from '../../hooks/ExpenseHook';
 import {
     Table, TableHead, TableBody, TableCell, TableRow, TableSortLabel, TablePagination, Paper,
@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import moment from 'moment';
 import Modal from 'react-modal';
+import { ToastContainer } from 'react-toastify';
 
 const Expenses = () => {
     const {
@@ -33,14 +34,22 @@ const Expenses = () => {
         totalPrice,
         description,
         handleDescriptionChange,
-        isEditMode
+        isEditMode,
+        saveExpense,
+        isModalLoading,
+        toggleDeleteModal,
+        isDeleteModalOpen,
+        selectedExpense,
+        removeExpense
     } = ExpenseHook();
 
     return (
         <div className="expenses-container">
             <div className="expenses-display">
-                <ExpensesIcon className="item-display" />
-                <div className="display-container item-display">
+                <div className="icon">
+                    <ExpensesIcon className="item-display" />
+                </div>
+                <div className="display-container">
                     <div className="display-title">
                         Easily tracky the expenses of your laundromat business.
                     </div>
@@ -56,6 +65,7 @@ const Expenses = () => {
             </div>
 
             <div className="expenses-record">
+                <h2> Expense Records </h2>
                 <Paper sx={{ width: "100%", overflow: "hidden" }} elevation={0}>
                     <TableContainer>
                         <Table>
@@ -143,7 +153,7 @@ const Expenses = () => {
                                             </TableCell>
                                             <TableCell className='column-actions'>
                                                 <button className='btn-edit' onClick={() => toggleModal(row)}> Edit </button>
-                                                <button className='btn-delete'> Delete </button>
+                                                <button className='btn-delete' onClick={() => toggleDeleteModal(row)}> Delete </button>
                                             </TableCell>
                                         </TableRow>
                                     ))
@@ -181,7 +191,7 @@ const Expenses = () => {
                         <h2> {isEditMode ? 'Edit an Expense' : 'Record an Expense'} </h2>
             
                         <div 
-                            className={`icon close-icon ${isLoading ? 'disabled' : ''}`}
+                            className={`icon close-icon ${isModalLoading ? 'disabled' : ''}`}
                             onClick={() => toggleModal(null)}
                         >
                             <MdClose size={15} color="#000" />
@@ -245,7 +255,6 @@ const Expenses = () => {
                             </div>
 
                             <div className="field-container">
-                            <div className="date-input">
                                 <label> Date </label>
                                 <input 
                                     type="date"
@@ -254,22 +263,88 @@ const Expenses = () => {
                                     onChange={handleDateChange}
                                 />
                             </div>
-                            </div>
                         </div>
             
                         <button 
-                            className={`btn-generate ${isLoading ? 'disabled' : ''}`}
-                            disabled={isLoading}
+                            className={`btn-generate ${isModalLoading ? 'disabled' : ''}`}
+                            disabled={isModalLoading}
+                            onClick={() => saveExpense()}
                         >
-                            {isLoading ? (
-                            <div className="spinner"></div>
-                            ) : (
-                                'Record Expense'
+                            {isModalLoading ? ( <div className="spinner"></div>) : (
+                                isEditMode ? 'Edit Expense' : 'Record Expense'
                             )}
                         </button>
                     </div>
                 </div>
             </Modal>
+
+            <Modal
+                animationType="fade"
+                isOpen={isDeleteModalOpen}
+                onRequestClose={() => toggleDeleteModal(null)}
+                shouldCloseOnOverlayClick={false}
+                className='custom-modal'
+                overlayClassName='custom-modal-overlay'
+            >
+                <div className="modal-container">
+                    <div className="header">
+                        <div className="icon delete">
+                            <MdDelete size={30} color="#B64D49" />
+                        </div>
+                        <h2 className="h2-delete"> Delete an Expense </h2>
+            
+                        <div 
+                            className={`icon close-icon ${isModalLoading ? 'disabled' : ''}`}
+                            onClick={() => toggleDeleteModal(null)}
+                        >
+                            <MdClose size={15} color="#000" />
+                        </div>
+                    </div>
+        
+                    <div className="separator"></div>
+                    <div className="content delete">
+                        <div className="content-title">
+                            Are you sure you want to delete this record?
+                        </div>
+                        <div className="row">
+                            <label> Date: </label>
+                            <span> {moment(new Date(selectedExpense?.date)).utcOffset(8).format('LL')} </span>
+                        </div>
+                        <div className="row">
+                            <label> Category: </label>
+                            <span> {selectedExpense?.category} </span>
+                        </div>
+                        <div className="row">
+                            <label> Description: </label>
+                            <span> {selectedExpense?.description ? selectedExpense.description : 'N/A'} </span>
+                        </div>
+                        <div className="row">
+                            <label> Price: </label>
+                            <span> 
+                                { 
+                                    new Intl.NumberFormat('en-PH', {
+                                        style: 'currency',
+                                        currency: 'PHP',
+                                        minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0,
+                                    }).format(selectedExpense?.expensePrice)
+                                }
+                            </span>
+                        </div>
+                        <button 
+                            className={`btn-delete ${isModalLoading ? 'disabled' : ''}`}
+                            disabled={isModalLoading}
+                            onClick={() => removeExpense()}
+                        >
+                            {isModalLoading ? ( <div className="spinner delete"></div>) : (
+                               'Confirm Deletion'
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
+
+            <ToastContainer />
         </div>
     );
 }

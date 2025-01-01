@@ -14,7 +14,7 @@ import {
   Legend,
 } from 'chart.js';
 import Modal from 'react-modal';
-import { ReactComponent as WashingIcon } from '../../assets/images/login-page-art-2.svg';
+import { ReactComponent as WashingIcon } from '../../assets/images/washing-icon.svg';
 import { DashboardHook } from '../../hooks/DashboardHook';
 import { ToastContainer } from 'react-toastify';
 
@@ -47,8 +47,10 @@ const Dashboard = () => {
   return (
     <div className="dashboard-container">
       <div className="dashboard-display">
-        <WashingIcon className="item-display" />
-        <div className="display-container item-display">
+        <div className="icon">
+          <WashingIcon className="item-display" />
+        </div>
+        <div className="display-container">
           <div className="display-title">
             Simplify the management of your laundromat operations.
           </div>
@@ -64,6 +66,7 @@ const Dashboard = () => {
       </div>
 
       <div className="dashboard-actions-container">
+        <h2> Reports </h2>
         <div className="dashboard-filter-container">
           <select className="dashboard-filter" value={salesFilter} onChange={handleChange}>
             <option value="1">Today</option>
@@ -223,18 +226,18 @@ const Dashboard = () => {
           </div>
          
           <div className="content">
-            <div className="date-inputs-container">
-              <div className="date-input">
+            <div className="form-row">
+              <div className="field-container">
                 <label> Start Date </label>
-                <input 
-                  type="date" 
-                  className="input"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                />
+                  <input 
+                    type="date" 
+                    className="input"
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                  />
               </div>
 
-              <div className="date-input">
+              <div className="field-container">
                 <label> End Date </label>
                 <input 
                   type="date"
@@ -243,9 +246,7 @@ const Dashboard = () => {
                   onChange={handleEndDateChange}
                 />
               </div>
-              
             </div>
-
             <button 
               className={`btn-generate ${isLoading ? 'disabled' : ''}`}
               onClick={processReport} 

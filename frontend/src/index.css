@@ -18,14 +18,11 @@ html, body {
   /* background-color: #f8f9fa; */
 }
 
-
-
 .custom-modal {
   position: fixed;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  height: 50%;
   width: 50%;
   border-radius: 10px;
   border: none;
@@ -48,4 +45,36 @@ html, body {
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.Toastify__toast--success .Toastify__progress-bar {
+  background-color: #17588E;
+}
+
+.Toastify__toast--success .Toastify__icon {
+  color: #17588E;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+  fill: #17588E !important;
+}
+
+.Toastify__progress-bar--success {
+  background: #17588E !important;
+}
+
+.Toastify__toast--error .Toastify__progress-bar {
+  background-color: #B64D49;
+}
+
+.Toastify__toast--error .Toastify__icon {
+  color: #B64D49;
+}
+
+.Toastify__toast--error .Toastify__toast-icon svg {
+  fill: #B64D49 !important;
+}
+
+.Toastify__progress-bar--error {
+  background: #B64D49 !important;
 }
