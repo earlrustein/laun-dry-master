@@ -229,7 +229,7 @@ const Dashboard = () => {
           <div className="content">
             <div className="form-row">
               <div className={`field-container ${!!errorMessage ? "field-error" : ""}`}>
-                <label> Start Date </label>
+                <label> Start Date * </label>
                   <input 
                     type="date" 
                     className="input"
@@ -239,7 +239,7 @@ const Dashboard = () => {
               </div>
 
               <div className={`field-container ${!!errorMessage ? "field-error" : ""}`}>
-                <label> End Date </label>
+                <label> End Date * </label>
                 <input 
                   type="date"
                   className="input"

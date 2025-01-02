@@ -47,7 +47,7 @@
             }
 
             
-            .btn-generate {
+            .btn-expense {
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -292,10 +292,26 @@
                     font-size: 16px;
                     -webkit-min-logical-width: 90%;
                 }
+
+                &.field-error {
+                    label {
+                        color: #B64D49;
+                    }
+
+                    input, select {
+                        border-left: 5px solid #B64D49;
+                    }
+                }
             }
         }
 
-        .btn-generate {
+        .error-message {
+            color: #B64D49;
+            font-weight: 100;
+            font-size: 14px;
+        }
+
+        .btn-expense {
             margin-top: 32px;
             height: 40px;
             width: 250px;
@@ -319,6 +335,11 @@
             @media (max-width: 480px) {
                 width: 100%;
             }
+
+            &.disabled {
+                background-color: rgba(23, 88, 142, 0.5);
+                border: 0;
+            }
         }
 
         .btn-delete {
@@ -340,6 +361,11 @@
             &:hover {
                 background-color: #da6561;
                 border: 1px solid #da6561;
+            }
+
+            &.disabled {
+                background-color: rgba(182, 77, 73, 0.5);
+                border: 0;
             }
 
             @media (max-width: 480px) {

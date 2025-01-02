@@ -20,6 +20,11 @@ export const ExpenseHook = () => {
   const [description, setDescription] = useState('');
   const [totalPrice, setTotalPrice] = useState('');
   const [date, setDate] = useState(moment().utcOffset(8).format('YYYY-MM-DD'));
+  const [isCategoryValid, setIsCategoryValid] = useState(true);
+  const [isDescriptionValid, setIsDescriptionValid] = useState(true);
+  const [isTotalPriceValid, setIsTotalPriceValid] = useState(true);
+  const [isDateValid, setIsDateValid] = useState(true);
+  const [isFormTouched, setIsFormTouched] = useState(false);
   
   const expenseCategories = [
     {
@@ -91,21 +96,24 @@ export const ExpenseHook = () => {
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
     setDescription('');
+    setIsFormTouched(true);
   }
   
   const handleDateChange = (e) => {
     setDate(e.target.value);
+    setIsFormTouched(true);
   };
 
   const handleTotalPriceChange = (e) => {
-
     if (/^\d*$/.test(e.target.value)) {
       setTotalPrice(e.target.value);
+      setIsFormTouched(true);
     }
   }
 
   const handleDescriptionChange = (e) => {
     setDescription(e.target.value);
+    setIsFormTouched(true);
   }
 
   const handleSort = (property) => {
@@ -149,6 +157,11 @@ export const ExpenseHook = () => {
   );
 
   const saveExpense = async () => {
+    validateForm();
+    if (!isFormValid()) {
+      return;
+    }
+
     setModalLoading(true);
     
     if (isEditMode) {
@@ -262,6 +275,24 @@ export const ExpenseHook = () => {
     }
   }
 
+  const validateForm = () => {
+    setIsCategoryValid(!!category);
+    setIsDescriptionValid(
+      (category === 'Supplies' || category === 'Utilities') ? !!description : true
+    );
+    setIsTotalPriceValid(!!totalPrice);
+    setIsDateValid(!!date);
+  };
+
+  const isFormValid = () => {
+    return isCategoryValid && isDescriptionValid && isTotalPriceValid && isDateValid;
+  };
+
+  useEffect(() => {
+    if (isFormTouched) {
+        validateForm();
+    }
+  }, [category, description, totalPrice, date, isFormTouched]);
   
   useEffect(() => {
     fetchExpenseList();
@@ -316,6 +347,11 @@ export const ExpenseHook = () => {
     toggleDeleteModal,
     isDeleteModalOpen,
     selectedExpense,
-    removeExpense
+    removeExpense,
+    isCategoryValid,
+    isDescriptionValid,
+    isTotalPriceValid,
+    isDateValid,
+    isFormValid
   };
 }
