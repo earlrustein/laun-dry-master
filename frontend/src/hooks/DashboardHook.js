@@ -16,6 +16,7 @@ export const DashboardHook = () => {
     const [totalTransaction, setTotalTransaction] = useState(0);
     const [startDate, setStartDate] = useState(moment().utcOffset(8).format('YYYY-MM-DD'));
     const [endDate, setEndDate] = useState(moment().utcOffset(8).format('YYYY-MM-DD'));
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         if (isModalOpen) {
@@ -46,13 +47,28 @@ export const DashboardHook = () => {
 
     const handleStartDateChange = (e) => {
         setStartDate(e.target.value);
+        validateDates(e.target.value, endDate);
     };
 
     const handleEndDateChange = (e) => {
         setEndDate(e.target.value);
+        validateDates(startDate, e.target.value);
+    };
+
+    const validateDates = (start, end) => {
+        if (start && end && new Date(start) > new Date(end)) {
+            setErrorMessage("Start date cannot be later than end date.");
+        } else {
+            setErrorMessage("");
+        }
     };
 
     const processReport = async () => {
+        if (!startDate || !endDate) {
+            setErrorMessage("Both start date and end date are required.");
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await fetch('https://laundry-master-emailer.onrender.com/api/send-email-web', {
@@ -354,6 +370,7 @@ export const DashboardHook = () => {
         handleEndDateChange,
         chartRef,
         processReport,
-        isLoading
+        isLoading,
+        errorMessage
     };
 }

@@ -41,7 +41,8 @@ const Dashboard = () => {
     handleEndDateChange,
     chartRef,
     processReport,
-    isLoading
+    isLoading,
+    errorMessage
   } = DashboardHook();
 
   return (
@@ -227,7 +228,7 @@ const Dashboard = () => {
          
           <div className="content">
             <div className="form-row">
-              <div className="field-container">
+              <div className={`field-container ${!!errorMessage ? "field-error" : ""}`}>
                 <label> Start Date </label>
                   <input 
                     type="date" 
@@ -237,7 +238,7 @@ const Dashboard = () => {
                   />
               </div>
 
-              <div className="field-container">
+              <div className={`field-container ${!!errorMessage ? "field-error" : ""}`}>
                 <label> End Date </label>
                 <input 
                   type="date"
@@ -247,10 +248,11 @@ const Dashboard = () => {
                 />
               </div>
             </div>
+            {errorMessage && <div className="error-message">*{errorMessage}</div>}
             <button 
-              className={`btn-generate ${isLoading ? 'disabled' : ''}`}
+              className={`btn-generate ${isLoading || !!errorMessage ? "disabled" : ""}`}
               onClick={processReport} 
-              disabled={isLoading}
+              disabled={isLoading || !!errorMessage}
             >
               {isLoading ? (
                 <div className="spinner"></div>
