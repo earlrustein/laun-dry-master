@@ -40,7 +40,12 @@ const Expenses = () => {
         toggleDeleteModal,
         isDeleteModalOpen,
         selectedExpense,
-        removeExpense
+        removeExpense,
+        isCategoryValid,
+        isDescriptionValid,
+        isTotalPriceValid,
+        isDateValid,
+        isFormValid
     } = ExpenseHook();
 
     return (
@@ -57,7 +62,10 @@ const Expenses = () => {
                         Managed your expenses by recording it and viewing it effortlessly.
                     </div>
         
-                    <button className='btn-generate' onClick={() => toggleModal(null)}>
+                    <button 
+                        className='btn-expense' 
+                        onClick={() => toggleModal(null)}
+                    >
                         <span> Record an Expense </span>
                         <MdArrowRightAlt className="arrow-icon" />
                     </button>
@@ -202,8 +210,8 @@ const Expenses = () => {
                     
                     <div className="content">
                         <div className="form-row">
-                            <div className="field-container">
-                                <label> Category </label>
+                            <div className={`field-container ${isCategoryValid ? "" : "field-error"}`}>
+                                <label> Category *</label>
                                 <select value={category} onChange={handleCategoryChange} className="form-select">
                                     <option value="" disabled>
                                         Select a category
@@ -216,8 +224,8 @@ const Expenses = () => {
                                 </select>
                             </div>
 
-                            <div className="field-container">
-                                <label>Description</label>
+                            <div className={`field-container ${isDescriptionValid ? "" : "field-error"}`}>
+                                <label> Description {category === 'Supplies' || category === 'Utilities' ? '*' : ''} </label>
                                 {category === 'Supplies' || category === 'Utilities' ? (
                                     <select value={description} onChange={handleDescriptionChange} className="form-select">
                                         <option value="" disabled>
@@ -244,8 +252,8 @@ const Expenses = () => {
                         </div>
 
                         <div className="form-row">
-                            <div className="field-container">
-                                <label> Total Price </label>
+                            <div className={`field-container ${isTotalPriceValid ? "" : "field-error"}`}>
+                                <label> Total Price *</label>
                                 <input 
                                     type="number" 
                                     value={totalPrice}
@@ -254,8 +262,8 @@ const Expenses = () => {
                                 />
                             </div>
 
-                            <div className="field-container">
-                                <label> Date </label>
+                            <div className={`field-container ${isDateValid ? "" : "field-error"}`}>
+                                <label> Date *</label>
                                 <input 
                                     type="date"
                                     className="input"
@@ -265,8 +273,9 @@ const Expenses = () => {
                             </div>
                         </div>
             
+                        {!isFormValid() && <div className="error-message">*Please fill up all the required fields first.</div>}
                         <button 
-                            className={`btn-generate ${isModalLoading ? 'disabled' : ''}`}
+                            className={`btn-expense ${isModalLoading || !isFormValid() ? "disabled" : ""}`}
                             disabled={isModalLoading}
                             onClick={() => saveExpense()}
                         >
