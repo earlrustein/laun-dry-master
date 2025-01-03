@@ -8,6 +8,7 @@ const { generatePDF } = require('../services/pdfService');
 const moment = require('moment');
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
+require('dotenv').config();
 
 router.post('/send-email-mobile', upload.single('file'), async (req, res) => {
   try {
@@ -19,9 +20,9 @@ router.post('/send-email-mobile', upload.single('file'), async (req, res) => {
 
     const fileBuffer = fs.readFileSync(req.file.path);
     await sendEmailWithAttachment({
-      to: ['rstn.mesa@gmail.com', 'chastineflorentino@gmail.com'],
+      to: process.env.EMAIL_TO,
       from: {
-        email: 'earl.rustein.mesa@gmail.com',
+        email: process.env.EMAIL_FROM,
         name: 'Laundry Master'
       },
       subject,
@@ -45,9 +46,9 @@ router.post('/send-email-web', upload.single('file'), async (req, res) => {
     const buffer = Buffer.from(pdfBuffer);
 
     await sendEmailWithAttachment({
-      to: ['rstn.mesa@gmail.com'],
+      to: process.env.EMAIL_TO,
       from: {
-        email: 'earl.rustein.mesa@gmail.com',
+        email: process.env.EMAIL_FROM,
         name: 'Laundry Master'
       },
       subject: 'Financial Report',

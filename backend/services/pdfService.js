@@ -4,7 +4,6 @@ const { generateHTMLContent } = require('./../templates/generated-html');
 const generatePDF = async (data) => {
   const { salesData, totalGrossSales, expensesData, totalExpensesData, dateRange } = data;
 
-  console.log('======================Executable Path:', puppeteer.executablePath());
   const browser = await puppeteer.launch(
     { 
       headless: 'new',

@@ -3,6 +3,7 @@ const { fetchDataForReport } = require('../services/reportService');
 const { generatePDF } = require('../services/pdfService');
 const { sendEmailWithAttachment } = require('../services/emailService');
 const moment = require('moment');
+require('dotenv').config();
 
 const generateAndSendReport = async () => {
   try {
@@ -12,9 +13,9 @@ const generateAndSendReport = async () => {
     const buffer = Buffer.from(pdfBuffer);
 
     await sendEmailWithAttachment({
-      to: ['rstn.mesa@gmail.com'],
+      to: process.env.EMAIL_TO,
       from: {
-        email: 'earl.rustein.mesa@gmail.com',
+        email: process.env.EMAIL_FROM,
         name: 'Laundry Master'
       },
       subject: 'Daily Report',
